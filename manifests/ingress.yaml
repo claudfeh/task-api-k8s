@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: task-api
+spec:
+  # Use the NGINX ingress controller that minikube provides.
+  ingressClassName: nginx
+  rules:
+  # "Traffic for the hostname task-api.local goes to..."
+  - host: task-api.local
+    http:
+      paths:
+      # ...any path starting with / ...
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            # ...to the task-api Service on port 5000.
+            name: task-api
+            port:
+              number: 5000

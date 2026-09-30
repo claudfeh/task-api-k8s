@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: task-api
+  labels:
+    app: task-api
+spec:
+  # Send traffic to whichever pods currently carry the label app=task-api.
+  # Pod names and IPs change; this selector always finds the live ones.
+  selector:
+    app: task-api
+  ports:
+  - port: 5000        # the stable port other things in the cluster use
+    targetPort: 5000  # the port the containers actually listen on
+  type: ClusterIP     # reachable only inside the cluster (default, safest)

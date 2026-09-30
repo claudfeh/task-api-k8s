@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-api
+  labels:
+    app: task-api
+spec:
+  # How many copies of the pod to keep running at all times.
+  replicas: 2
+  # How this Deployment finds the pods it owns: by the label app=task-api.
+  selector:
+    matchLabels:
+      app: task-api
+  # The pod blueprint. The Deployment stamps out copies of this.
+  template:
+    metadata:
+      labels:
+        app: task-api
+    spec:
+      containers:
+      - name: task-api
+        image: ghcr.io/claudfeh/task-api:latest
+        ports:
+        - containerPort: 5000
+        env:
+        # "postgres" will be the database Service we create in the next
+        # session. Until then /health reports database "down", but the
+        # app still starts fine.
+        - name: DB_HOST
+          value: "postgres"
+        - name: DB_NAME
+          value: "tasks"
+        - name: DB_USER
+          value: "taskuser"
+        - name: DB_PASSWORD
+          value: "taskpass"

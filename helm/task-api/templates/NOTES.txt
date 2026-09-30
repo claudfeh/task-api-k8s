@@ -1,0 +1,16 @@
+The task-api chart is installed.
+
+Reach the app:
+  kubectl port-forward svc/task-api 5000:5000
+  then open http://localhost:5000/health in your browser.
+
+Or through the Ingress (fake the hostname, skipping DNS setup):
+  kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80
+  curl.exe -H "Host: task-api.local" http://localhost:8080/api/tasks
+
+Try changing configuration without touching YAML:
+  helm upgrade {{ .Release.Name }} . --set replicaCount=3
+  kubectl get pods   # watch a third app pod appear
+
+Remove everything Helm installed:
+  helm uninstall {{ .Release.Name }}

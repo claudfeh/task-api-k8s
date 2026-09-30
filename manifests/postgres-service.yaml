@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  # This name is the whole point: your app was deployed with
+  # DB_HOST=postgres, so the moment this Service exists, the app
+  # can resolve "postgres" to this database. No app restart needed -
+  # the app opens a fresh DB connection on every /health check.
+  selector:
+    app: postgres
+  ports:
+  - port: 5432
+    targetPort: 5432

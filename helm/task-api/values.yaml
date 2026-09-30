@@ -1,0 +1,23 @@
+# Default configuration for the task-api chart.
+# Override any of these at install/upgrade time, e.g.:
+#   helm upgrade task-api . --set replicaCount=3
+
+replicaCount: 2
+
+image:
+  repository: ghcr.io/claudfeh/task-api
+  tag: latest
+
+service:
+  port: 5000
+
+ingress:
+  host: task-api.local
+
+postgres:
+  dbName: tasks
+  dbUser: taskuser
+  # Demo password. Override per environment:
+  #   helm install task-api . --set postgres.dbPassword=<real-password>
+  dbPassword: taskpass
+  storage: 1Gi

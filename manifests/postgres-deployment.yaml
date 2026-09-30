@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  # Only 1 replica: two Postgres pods writing to the same disk
+  # would corrupt it. (The fix for that is a StatefulSet - beyond
+  # tonight's scope, but ask me about it in an interview and I'll
+  # explain.)
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:16
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: "tasks"
+        - name: POSTGRES_USER
+          value: "taskuser"
+        # The password comes from the Secret, not written here.
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
+        volumeMounts:
+        - name: pgdata
+          mountPath: /var/lib/postgresql/data
+        # The init script: runs once when Postgres first creates its data.
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: pgdata
+        persistentVolumeClaim:
+          claimName: postgres-data
+      - name: init-script
+        configMap:
+          name: postgres-init
